@@ -1,0 +1,59 @@
+---
+title: "baby_names"
+author: "Diego Martinez"
+date: "1/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(babynames)
+library(tidyverse)
+library(dplyr)
+```
+
+
+```{r}
+diego<-babynames%>%
+  group_by(year)%>%
+  filter(name == "Diego")
+
+babynames = babynames
+```
+
+```{r}
+diego%>%
+  ggplot(aes(x = year, y = prop)) + 
+  geom_line() + 
+  labs(title = "Frequency of Name Diego",
+       caption = "Data from babynames package",
+       subtitle = "Diego Became More Common In 2000s"
+       )
+```
+
+```{r}
+top_100<- babynames%>%
+  filter(year == max(year))%>%
+  group_by(name)%>%
+  summarise(total = sum(n))%>%
+  arrange(desc(total))%>%
+  slice(1:10)%>%
+  select( - total)
+```
+
+```{r}
+top_10 <- babynames%>% inner_join(top_100, by = "name") %>%
+  group_by(name, year)%>%
+  summarise(total = sum(n))
+```
+
+```{r}
+top_10%>%
+  ggplot(aes(x = year, y = total, color = name)) + 
+  geom_line() + 
+  scale_x_continuous(breaks = seq(1880, 2017, 10))
+```
+
+
+
